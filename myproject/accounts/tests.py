@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse, resolve
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from .views import signup
 
 
@@ -51,9 +52,26 @@ class SuccessfulSignUpTest(TestCase):
         The resulting response should now have a `user` to its context,
         after a successful sign up.
         '''
-        response - self.client.get(home_url)
+        response = self.client.get(self.home_url)
         user = response.context.get('user')
         self.assertTrue(user.is_authenticated)
+
+
+
+class InvalidSignUpTest(TestCase):
+    def setUp(self):
+        url = reverse('signup')
+        self.response = self.client.post(url, {})
+
+    def test_signup_status_code(self):
+        self.assertEqual(self.response.status_code, 200)
+
+    def test_form_errors(self):
+        form = self.response.context.get('form')
+        self.assertTrue(form.errors)
+
+    def test_dont_create_user(self):
+        self.assertFalse(User.objects.exists())
 
 
 
