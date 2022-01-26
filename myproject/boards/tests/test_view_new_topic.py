@@ -45,7 +45,6 @@ class NewTopicTest(TestCase):
             'subject': "Test title",
             'message': 'Lorem ipsum dolor sit amet',
         }
-
         response = self.client.post(url, data)
         self.assertTrue(Topic.objects.exists())
         self.assertTrue(Post.objects.exists())
